@@ -14,6 +14,7 @@
 # IDE and generated project files
 .vs/
 .idea/
+.vscode/settings.json
 *.csproj
 *.sln
 *.slnx
