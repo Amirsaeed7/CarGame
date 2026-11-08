@@ -129,7 +129,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < playerRenderers.Length; i++)
         {
             playerMaterials[i] = playerRenderers[i].material;
-            originalPlayerColors[i] = playerMaterials[i].color;
+            originalPlayerColors[i] = playerMaterials[i].HasProperty("_BaseColor")
+                ? playerMaterials[i].GetColor("_BaseColor")
+                : playerMaterials[i].color;
             if (playerMaterials[i].HasProperty("_EmissionColor"))
             {
                 originalPlayerEmissionColors[i] = playerMaterials[i].GetColor("_EmissionColor");
@@ -371,7 +373,15 @@ public class GameManager : MonoBehaviour
     private void SetPlayerFlash(int rendererIndex, bool flashRed)
     {
         Material material = playerMaterials[rendererIndex];
-        material.color = flashRed ? Color.red : originalPlayerColors[rendererIndex];
+        Color baseColor = flashRed ? Color.red : originalPlayerColors[rendererIndex];
+        if (material.HasProperty("_BaseColor"))
+        {
+            material.SetColor("_BaseColor", baseColor);
+        }
+        else
+        {
+            material.color = baseColor;
+        }
 
         if (!material.HasProperty("_EmissionColor"))
         {
@@ -381,7 +391,7 @@ public class GameManager : MonoBehaviour
         if (flashRed)
         {
             material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", Color.red * 2f);
+            material.SetColor("_EmissionColor", Color.red * 8f);
         }
         else
         {
