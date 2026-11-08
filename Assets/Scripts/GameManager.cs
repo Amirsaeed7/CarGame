@@ -24,8 +24,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float fuelCapacity = 100f;
     [SerializeField] private float fuelDrainPerSecond = 2f;
     [SerializeField] private float startingSpeed = 12f;
-    [SerializeField] private float maximumSpeed = 24f;
-    [SerializeField] private float distanceToMaximumDifficulty = 1000f;
+    [SerializeField] private float maximumSpeed = 30f;
+    [SerializeField] private float distanceToMaximumDifficulty = 600f;
+    [SerializeField] private float distancePerScorePoint = 5f;
     [SerializeField] private float minimumObstacleSpawnInterval = 1.2f;
     [SerializeField, Range(0f, 1f)] private float maximumObstacleSpawnChance = 0.8f;
     [SerializeField] private float collisionFlashDuration = 0.6f;
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     private Vector3 startingPlayerPosition;
     [SerializeField] private float currentFuel;
     [SerializeField] private float distanceTravelled;
+    private int distanceScoreAwarded;
     [SerializeField] private int lives;
     [SerializeField] private int score;
     [SerializeField] private int highScore;
@@ -84,6 +86,7 @@ public class GameManager : MonoBehaviour
             || startingSpeed <= 0f
             || maximumSpeed < startingSpeed
             || distanceToMaximumDifficulty <= 0f
+            || distancePerScorePoint <= 0f
             || minimumObstacleSpawnInterval <= 0f)
         {
             Debug.LogError("Assign the player, road pool, and spawner, and configure valid gameplay values.", this);
@@ -261,6 +264,7 @@ public class GameManager : MonoBehaviour
         currentFuel = fuelCapacity;
         score = 0;
         distanceTravelled = 0f;
+        distanceScoreAwarded = 0;
 
         player.ResetForNewRun(startingPlayerPosition, startingSpeed);
         roadPool.ResetForNewRun();
@@ -274,6 +278,13 @@ public class GameManager : MonoBehaviour
     private void UpdateDifficulty()
     {
         distanceTravelled = Mathf.Max(0f, player.transform.position.z - startingPlayerPosition.z);
+        int distanceScore = Mathf.FloorToInt(distanceTravelled / distancePerScorePoint);
+        if (distanceScore > distanceScoreAwarded)
+        {
+            AddScore(distanceScore - distanceScoreAwarded);
+            distanceScoreAwarded = distanceScore;
+        }
+
         float progress = Mathf.Clamp01(distanceTravelled / distanceToMaximumDifficulty);
         float speed = Mathf.Lerp(startingSpeed, maximumSpeed, progress);
         float spawnInterval = Mathf.Lerp(

@@ -2811,8 +2811,9 @@ MonoBehaviour:
   fuelCapacity: 100
   fuelDrainPerSecond: 2
   startingSpeed: 12
-  maximumSpeed: 24
-  distanceToMaximumDifficulty: 1000
+  maximumSpeed: 30
+  distanceToMaximumDifficulty: 600
+  distancePerScorePoint: 5
   minimumObstacleSpawnInterval: 1.2
   maximumObstacleSpawnChance: 0.8
   collisionFlashDuration: 0.6
