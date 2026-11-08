@@ -11,6 +11,7 @@ public class NightEnvironmentController : MonoBehaviour
     [SerializeField] private Volume environmentVolume;
     [SerializeField] private RoadSegmentPool roadManager;
     [SerializeField] private Camera gameCamera;
+    [SerializeField] private Material litMaterialTemplate;
     [SerializeField] private Material fireworkMaterialTemplate;
 
     private readonly Color[] fireworkColors =
@@ -203,30 +204,29 @@ public class NightEnvironmentController : MonoBehaviour
 
     private void CreateMaterials()
     {
-        Shader litShader = Shader.Find("Universal Render Pipeline/Lit");
-        if (litShader == null)
+        if (litMaterialTemplate == null || litMaterialTemplate.shader == null)
         {
-            Debug.LogError("The Universal Render Pipeline/Lit shader could not be found.", this);
+            Debug.LogError("Assign the URP Lit material template.", this);
             enabled = false;
             return;
         }
 
-        roadMaterial = CreateMaterial(litShader, new Color(0.018f, 0.022f, 0.04f), Color.black);
-        laneMaterial = CreateMaterial(litShader, new Color(0.04f, 0.35f, 0.55f), new Color(0.12f, 1.5f, 2.4f));
-        cyanMaterial = CreateMaterial(litShader, new Color(0.02f, 0.32f, 0.42f), new Color(0.08f, 1.2f, 1.8f));
-        magentaMaterial = CreateMaterial(litShader, new Color(0.35f, 0.04f, 0.24f), new Color(1.7f, 0.12f, 1.1f));
-        headlightMaterial = CreateMaterial(litShader, Color.white, new Color(3f, 3.2f, 2.7f));
-        playerBodyMaterial = CreateMaterial(litShader, new Color(0.035f, 0.12f, 0.28f), new Color(0.015f, 0.13f, 0.48f));
-        rivalBodyMaterial = CreateMaterial(litShader, new Color(0.19f, 0.035f, 0.14f), new Color(0.38f, 0.018f, 0.16f));
-        windowMaterial = CreateMaterial(litShader, new Color(0.018f, 0.06f, 0.12f), new Color(0.01f, 0.12f, 0.2f));
-        tireMaterial = CreateMaterial(litShader, new Color(0.012f, 0.017f, 0.03f), Color.black);
-        hubMaterial = CreateMaterial(litShader, new Color(0.18f, 0.32f, 0.48f), new Color(0.04f, 0.16f, 0.3f));
-        taillightMaterial = CreateMaterial(litShader, new Color(0.65f, 0.015f, 0.025f), new Color(2.2f, 0.012f, 0.02f));
-        coinMaterial = CreateMaterial(litShader, new Color(1f, 0.48f, 0.025f), new Color(2.4f, 0.68f, 0.025f));
-        coinRimMaterial = CreateMaterial(litShader, new Color(1f, 0.78f, 0.18f), new Color(1.8f, 1.1f, 0.12f));
-        fuelBodyMaterial = CreateMaterial(litShader, new Color(0.045f, 0.48f, 0.3f), new Color(0.02f, 0.36f, 0.15f));
-        fuelAccentMaterial = CreateMaterial(litShader, new Color(0.85f, 0.95f, 0.85f), new Color(0.55f, 1.3f, 0.7f));
-        metalMaterial = CreateMaterial(litShader, new Color(0.2f, 0.32f, 0.42f), new Color(0.06f, 0.22f, 0.3f));
+        roadMaterial = CreateMaterial(new Color(0.018f, 0.022f, 0.04f), Color.black);
+        laneMaterial = CreateMaterial(new Color(0.04f, 0.35f, 0.55f), new Color(0.12f, 1.5f, 2.4f));
+        cyanMaterial = CreateMaterial(new Color(0.02f, 0.32f, 0.42f), new Color(0.08f, 1.2f, 1.8f));
+        magentaMaterial = CreateMaterial(new Color(0.35f, 0.04f, 0.24f), new Color(1.7f, 0.12f, 1.1f));
+        headlightMaterial = CreateMaterial(Color.white, new Color(3f, 3.2f, 2.7f));
+        playerBodyMaterial = CreateMaterial(new Color(0.035f, 0.12f, 0.28f), new Color(0.015f, 0.13f, 0.48f));
+        rivalBodyMaterial = CreateMaterial(new Color(0.19f, 0.035f, 0.14f), new Color(0.38f, 0.018f, 0.16f));
+        windowMaterial = CreateMaterial(new Color(0.018f, 0.06f, 0.12f), new Color(0.01f, 0.12f, 0.2f));
+        tireMaterial = CreateMaterial(new Color(0.012f, 0.017f, 0.03f), Color.black);
+        hubMaterial = CreateMaterial(new Color(0.18f, 0.32f, 0.48f), new Color(0.04f, 0.16f, 0.3f));
+        taillightMaterial = CreateMaterial(new Color(0.65f, 0.015f, 0.025f), new Color(2.2f, 0.012f, 0.02f));
+        coinMaterial = CreateMaterial(new Color(1f, 0.48f, 0.025f), new Color(2.4f, 0.68f, 0.025f));
+        coinRimMaterial = CreateMaterial(new Color(1f, 0.78f, 0.18f), new Color(1.8f, 1.1f, 0.12f));
+        fuelBodyMaterial = CreateMaterial(new Color(0.045f, 0.48f, 0.3f), new Color(0.02f, 0.36f, 0.15f));
+        fuelAccentMaterial = CreateMaterial(new Color(0.85f, 0.95f, 0.85f), new Color(0.55f, 1.3f, 0.7f));
+        metalMaterial = CreateMaterial(new Color(0.2f, 0.32f, 0.42f), new Color(0.06f, 0.22f, 0.3f));
 
         if (fireworkMaterialTemplate == null || fireworkMaterialTemplate.shader == null)
         {
@@ -238,18 +238,19 @@ public class NightEnvironmentController : MonoBehaviour
         fireworkMaterial.SetColor("_BaseColor", Color.white);
     }
 
-    private Material CreateMaterial(Shader shader, Color baseColor, Color emissionColor)
+    private Material CreateMaterial(Color baseColor, Color emissionColor)
     {
-        Material material = new Material(shader);
-        material.SetColor("_BaseColor", new Color(
-            Mathf.Max(baseColor.r, emissionColor.r),
-            Mathf.Max(baseColor.g, emissionColor.g),
-            Mathf.Max(baseColor.b, emissionColor.b),
-            baseColor.a));
+        Material material = new Material(litMaterialTemplate);
+        material.SetColor("_BaseColor", baseColor);
         if (emissionColor.maxColorComponent > 0f)
         {
             material.EnableKeyword("_EMISSION");
             material.SetColor("_EmissionColor", emissionColor);
+        }
+        else
+        {
+            material.SetColor("_EmissionColor", Color.black);
+            material.DisableKeyword("_EMISSION");
         }
 
         return material;

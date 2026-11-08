@@ -2840,6 +2840,7 @@ MonoBehaviour:
   environmentVolume: {fileID: 832575518}
   roadManager: {fileID: 565408864}
   gameCamera: {fileID: 330585545}
+  litMaterialTemplate: {fileID: 2100000, guid: 6b14ec76f22b4ac0b75eb53d0c74a861, type: 2}
   fireworkMaterialTemplate: {fileID: 2100000, guid: e823cd5b5d27c0f4b8256e7c12ee3e6d, type: 2}
 --- !u!114 &1819934584
 MonoBehaviour:
