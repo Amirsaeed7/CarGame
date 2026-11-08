@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float fuelCapacity = 100f;
     [SerializeField] private float fuelDrainPerSecond = 2f;
     [SerializeField] private float startingSpeed = 12f;
-    [SerializeField] private float maximumSpeed = 30f;
+    [SerializeField] private float speedIncreasePerDistance = 0.03f;
     [SerializeField] private float distanceToMaximumDifficulty = 600f;
     [SerializeField] private float distancePerScorePoint = 5f;
     [SerializeField] private float minimumObstacleSpawnInterval = 1.2f;
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
             || fuelCapacity <= 0f
             || fuelDrainPerSecond < 0f
             || startingSpeed <= 0f
-            || maximumSpeed < startingSpeed
+            || speedIncreasePerDistance <= 0f
             || distanceToMaximumDifficulty <= 0f
             || distancePerScorePoint <= 0f
             || minimumObstacleSpawnInterval <= 0f)
@@ -286,7 +286,7 @@ public class GameManager : MonoBehaviour
         }
 
         float progress = Mathf.Clamp01(distanceTravelled / distanceToMaximumDifficulty);
-        float speed = Mathf.Lerp(startingSpeed, maximumSpeed, progress);
+        float speed = startingSpeed + distanceTravelled * speedIncreasePerDistance;
         float spawnInterval = Mathf.Lerp(
             interactableSpawner.BaseSpawnInterval,
             minimumObstacleSpawnInterval,
