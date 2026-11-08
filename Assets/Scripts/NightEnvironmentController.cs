@@ -241,7 +241,11 @@ public class NightEnvironmentController : MonoBehaviour
     private Material CreateMaterial(Shader shader, Color baseColor, Color emissionColor)
     {
         Material material = new Material(shader);
-        material.SetColor("_BaseColor", baseColor);
+        material.SetColor("_BaseColor", new Color(
+            Mathf.Max(baseColor.r, emissionColor.r),
+            Mathf.Max(baseColor.g, emissionColor.g),
+            Mathf.Max(baseColor.b, emissionColor.b),
+            baseColor.a));
         if (emissionColor.maxColorComponent > 0f)
         {
             material.EnableKeyword("_EMISSION");
