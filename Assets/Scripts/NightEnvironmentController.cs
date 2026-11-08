@@ -11,6 +11,7 @@ public class NightEnvironmentController : MonoBehaviour
     [SerializeField] private Volume environmentVolume;
     [SerializeField] private RoadSegmentPool roadManager;
     [SerializeField] private Camera gameCamera;
+    [SerializeField] private Material fireworkMaterialTemplate;
 
     private readonly Color[] fireworkColors =
     {
@@ -76,7 +77,10 @@ public class NightEnvironmentController : MonoBehaviour
         }
 
         CreateHeadlights();
-        CreateFireworks();
+        if (fireworkMaterial != null)
+        {
+            CreateFireworks();
+        }
     }
 
     private IEnumerator Start()
@@ -224,15 +228,13 @@ public class NightEnvironmentController : MonoBehaviour
         fuelAccentMaterial = CreateMaterial(litShader, new Color(0.85f, 0.95f, 0.85f), new Color(0.55f, 1.3f, 0.7f));
         metalMaterial = CreateMaterial(litShader, new Color(0.2f, 0.32f, 0.42f), new Color(0.06f, 0.22f, 0.3f));
 
-        Shader particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-        if (particleShader == null)
+        if (fireworkMaterialTemplate == null || fireworkMaterialTemplate.shader == null)
         {
-            Debug.LogError("The URP particle shader could not be found; fireworks cannot be rendered.", this);
-            enabled = false;
+            Debug.LogWarning("Assign a particle material to enable fireworks.", this);
             return;
         }
 
-        fireworkMaterial = new Material(particleShader);
+        fireworkMaterial = new Material(fireworkMaterialTemplate);
         fireworkMaterial.SetColor("_BaseColor", Color.white);
     }
 
